@@ -1,6 +1,6 @@
 {
   "name": "mg-bibles",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A package for accessing Bible verses in Malagasy and Diem versions",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -21,18 +21,19 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yourusername/mg-bibles.git"
+    "url": "git+https://github.com/mianala/bibles.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/mg-bibles/issues"
+    "url": "https://github.com/mianala/bibles/issues"
   },
-  "homepage": "https://github.com/yourusername/mg-bibles#readme",
+  "homepage": "https://github.com/mianala/bibles#readme",
   "devDependencies": {
     "typescript": "^5.0.0"
   },
   "files": [
     "dist",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "CHANGELOG.md"
   ]
 } 
