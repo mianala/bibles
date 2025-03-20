@@ -1,4 +1,4 @@
-const { getVerses, listBooks, countVerses } = require('./dist');
+const { getVerses, listBooks, countVerses, chapterCount, versesCount } = require('./dist');
 
 // Test single verse
 console.log('\nSingle verse:');
@@ -16,10 +16,17 @@ console.log(getVerses('mg', 'jaona 3:16,18'));
 console.log('\nWhole chapter:');
 console.log(getVerses('diem', 'jaona 3'));
 
-// Test list books
+// List all books in a version
 console.log('\nList books in MG version:');
 console.log(listBooks('mg'));
 
-// Test count verses
-console.log('\nCount verses in Jaona:');
-console.log(countVerses('mg', 'jaona')); 
+// Test verse counting
+console.log('\nVerse counting:');
+console.log('Total verses in Jaona:', countVerses('mg', 'jaona'));
+console.log('Number of chapters in Jaona:', chapterCount('mg', 'jaona'));
+console.log('Verses in Jaona chapter 3:', versesCount('mg', 'jaona', 3));
+
+console.log('\nPsalms counting:');
+console.log('Total verses in Salamo:', countVerses('mg', 'salamo'));
+console.log('Number of chapters in Salamo:', chapterCount('mg', 'salamo'));
+console.log('Verses in Salamo chapter 119:', versesCount('mg', 'salamo', 119)); 

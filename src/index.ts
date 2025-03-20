@@ -175,6 +175,48 @@ export function listBooks(version: BibleVersion): string[] {
   });
 }
 
+export function chapterCount(version: BibleVersion, bookName: string): number {
+  if (!BIBLE_VERSIONS.includes(version)) {
+    throw new Error(`Invalid Bible version: ${version}. Available versions: ${BIBLE_VERSIONS.join(', ')}`);
+  }
+
+  const bibleData = getBibleData(version);
+  const book = bibleData[bookName.toLowerCase()];
+
+  if (!book) {
+    throw new Error(`Book not found: ${bookName}`);
+  }
+
+  let count = 0;
+  Object.keys(book).forEach(chapter => {
+    if (chapter !== 'name' && chapter !== 'order' && chapter !== 'chapter_number') {
+      count++;
+    }
+  });
+
+  return count;
+}
+
+export function versesCount(version: BibleVersion, bookName: string, chapter: number): number {
+  if (!BIBLE_VERSIONS.includes(version)) {
+    throw new Error(`Invalid Bible version: ${version}. Available versions: ${BIBLE_VERSIONS.join(', ')}`);
+  }
+
+  const bibleData = getBibleData(version);
+  const book = bibleData[bookName.toLowerCase()];
+
+  if (!book) {
+    throw new Error(`Book not found: ${bookName}`);
+  }
+
+  const chapterData = book[chapter.toString()] as Record<string, string>;
+  if (!chapterData) {
+    throw new Error(`Chapter not found: ${chapter}`);
+  }
+
+  return Object.keys(chapterData).length;
+}
+
 export function countVerses(version: BibleVersion, bookName: string): number {
   if (!BIBLE_VERSIONS.includes(version)) {
     throw new Error(`Invalid Bible version: ${version}. Available versions: ${BIBLE_VERSIONS.join(', ')}`);

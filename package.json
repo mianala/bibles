@@ -1,6 +1,6 @@
 {
   "name": "mg-bibles",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A package for accessing Bible verses in Malagasy and Diem versions",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
