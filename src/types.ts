@@ -4,8 +4,6 @@ export type Meta = {
   chapter_number: number;
 };
 
-// ...existing code...
-
 export type Verse = {
   verse: number;
   text: string;
@@ -18,7 +16,7 @@ export type BibleBook = Record<string, Chapter | Meta>;
 export type VerseReference = {
   book: string;
   chapter: number;
-  verses?: number[]; // Make verses optional
+  verses?: number[];
 };
 
-export type BibleVersion = "diem" | "mg";
+export type BibleVersion = "diem" | "mg"; 
