@@ -1,12 +1,45 @@
 import * as diem from './diem';
 import * as mg from './mg';
-import { type BibleBook, type VerseReference, type BibleVersion } from './types';
+import kjvData from './en_kjv.json';
+import apeeData from './fr_apee.json';
+import { type BibleBook, type VerseReference, type BibleVersion, type KJVAPEEFormat } from './types';
 
-const BIBLE_VERSIONS: BibleVersion[] = ['mg', 'diem'];
+const BIBLE_VERSIONS: BibleVersion[] = ['mg', 'diem', 'kjv', 'apee'];
 
 function getBibleData(version: BibleVersion) {
-  const data = version === 'diem' ? diem : mg;
-  return data as Record<string, BibleBook>;
+  switch (version) {
+    case 'diem':
+      return diem as unknown as Record<string, BibleBook>;
+    case 'mg':
+      return mg as unknown as Record<string, BibleBook>;
+    case 'kjv':
+      return convertKJVAPEEFormat(kjvData as KJVAPEEFormat);
+    case 'apee':
+      return convertKJVAPEEFormat(apeeData as KJVAPEEFormat);
+    default:
+      throw new Error(`Unsupported Bible version: ${version}`);
+  }
+}
+
+function convertKJVAPEEFormat(data: KJVAPEEFormat): Record<string, BibleBook> {
+  return data.reduce((acc, book) => {
+    const bookData: BibleBook = {
+      name: book.name,
+      order: 0, // We'll need to set this based on your ordering requirements
+      chapter_number: book.chapters.length,
+    };
+
+    book.chapters.forEach((chapter, chapterIndex) => {
+      const chapterData: Record<string, string> = {};
+      chapter.forEach((verse, verseIndex) => {
+        chapterData[(verseIndex + 1).toString()] = verse;
+      });
+      bookData[(chapterIndex + 1).toString()] = chapterData;
+    });
+
+    acc[book.abbrev.toLowerCase()] = bookData;
+    return acc;
+  }, {} as Record<string, BibleBook>);
 }
 
 function parseVerseReference(reference: string): VerseReference {
@@ -238,158 +271,6 @@ export function countVerses(version: BibleVersion, bookName: string): number {
   });
 
   return totalVerses;
-}
-
-// Add new API interfaces
-interface BibleAPIResponse {
-  reference: string;
-  verses: {
-    book_name: string;
-    chapter: number;
-    verse: number;
-    text: string;
-  }[];
-  text: string;
-  translation_name: string;
-}
-
-interface BibleTextResponse {
-  reference: string;
-  text: string;
-  translation_id: string;
-  translation_name: string;
-  translation_note: string;
-}
-
-async function fetchExternalVerse(version: string, reference: string) {
-  // Normalize reference to lowercase
-  const normalizedReference = reference.toLowerCase();
-  const response = await fetch(`https://bible-api.com/${normalizedReference}?translation=${version}`);
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch verse 🚫');
-  }
-
-  const data: BibleAPIResponse | BibleTextResponse = await response.json();
-
-  // Handle text-only response (KJV, ASV)
-  if (!('verses' in data)) {
-    console.log('📖 Received text-only response');
-    // Split text into verses by sentences
-    const verses = data.text
-      .split(/(?<=[.!?])\s+/)
-      .filter(Boolean)
-      .reduce(
-        (acc, text, index) => {
-          const verseNum = (index + 1).toString();
-          acc[verseNum] = `${verseNum}. ${text.trim()}`;
-          return acc;
-        },
-        {} as Record<string, string>
-      );
-
-    return {
-      reference: normalizedReference,
-      verses,
-    };
-  }
-
-  // Handle verses array response
-  const verses = data.verses.reduce(
-    (acc, verse) => {
-      acc[verse.verse.toString()] = `${verse.verse}. ${verse.text.trim()}`;
-      return acc;
-    },
-    {} as Record<string, string>
-  );
-
-  return {
-    reference: normalizedReference,
-    verses,
-  };
-}
-
-async function fetchBibleToolVerse(version: string, reference: string) {
-  // Normalize reference to lowercase for processing
-  const normalizedReference = reference.toLowerCase();
-  const [bookPart, versePart] = normalizedReference.split(' ');
-  let bookCode: string;
-
-  const cleanBookName = (name: string) => name.replace(/\s+/g, '').toLowerCase();
-
-  if (/^\d/.test(bookPart)) {
-    const [num, ...nameParts] = normalizedReference.split(' ');
-    const name = cleanBookName(nameParts[0]);
-    if (name.startsWith('phil')) {
-      bookCode = name.slice(0, 5);
-    } else {
-      bookCode = name.slice(0, 3);
-    }
-    bookCode = `${num}${bookCode}`;
-  } else {
-    const name = cleanBookName(bookPart);
-    if (name.startsWith('phil')) {
-      bookCode = name.slice(0, 5);
-    } else {
-      bookCode = name.slice(0, 3);
-    }
-  }
-
-  const formattedVersion = version === 'niv' ? 'niv' : 'lsg';
-  const formattedReference = `${formattedVersion}-${bookCode}/${versePart}`;
-
-  const response = await fetch(`http://ibibles.net/quote.php?${formattedReference}`);
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch verse 🚫');
-  }
-
-  const html = await response.text();
-
-  // Handle error responses
-  if (html.includes('Invalid syntax') || html.includes('Bible verse not found')) {
-    throw new Error('Verse not found or invalid reference 📭');
-  }
-
-  const verses = {} as Record<string, string>;
-
-  // Updated regex to handle both formats
-  const verseRegex = /<small>(\d+:\d+)<\/small>\s*([^<]+)(?:\s*<br>|\s*$)/g;
-
-  let match;
-  while ((match = verseRegex.exec(html)) !== null) {
-    const [, reference, text] = match;
-    const verseNum = reference.split(':')[1];
-    const cleanText = text
-      .trim()
-      .replace(/^["']|["']$/g, '') // Remove quotes at start/end
-      .replace(/\s+/g, ' '); // Normalize whitespace
-    verses[verseNum] = `${verseNum}. ${cleanText}`;
-  }
-
-  if (Object.keys(verses).length === 0) {
-    console.log('🔍 No verses found in HTML:', html);
-    throw new Error('No verses found in response 📭');
-  }
-
-  return {
-    reference: normalizedReference,
-    verses,
-  };
-}
-
-export async function fetchVerses(version: string, reference: string) {
-  // Handle Bible Tool API versions (NIV and LSG)
-  if (version === 'niv' || version === 'lsg') {
-    return fetchBibleToolVerse(version, reference);
-  }
-  
-  // Handle Bible API versions (KJV and ASV)
-  if (version === 'kjv' || version === 'asv') {
-    return fetchExternalVerse(version, reference);
-  }
-
-  throw new Error(`Unsupported Bible version: ${version}. Supported versions are: niv, lsg, kjv, asv`);
 }
 
 export type { BibleVersion, VerseReference }; 

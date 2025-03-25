@@ -11,7 +11,12 @@ export type Verse = {
 
 export type Chapter = Record<string, string>;
 
-export type BibleBook = Record<string, Chapter | Meta>;
+export type BibleBook = {
+  name?: string;
+  order?: number;
+  chapter_number?: number;
+  [key: string]: Chapter | Meta | string | number | undefined;
+};
 
 export type VerseReference = {
   book: string;
@@ -19,4 +24,12 @@ export type VerseReference = {
   verses?: number[];
 };
 
-export type BibleVersion = "diem" | "mg"; 
+export type BibleVersion = "diem" | "mg" | "kjv" | "apee";
+
+export type KJVAPEEBook = {
+  abbrev: string;
+  name: string;
+  chapters: string[][];
+};
+
+export type KJVAPEEFormat = KJVAPEEBook[]; 
