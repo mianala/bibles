@@ -18,7 +18,7 @@ describe('Bible Functions', () => {
     it('should get verses from DIEM version', () => {
       const result = getVerses('diem', 'jaona 3:16');
       expect(result.reference).toBe('jaona 3:16');
-      expect(result.verses['16']).toBe('16. Fa tena tia an’izao tontolo izao Andriamanitra ka nanome an’ilay Zanany lahitokana, mba tsy ho ringana izay rehetra maneho finoana azy, fa hahazo fiainana mandrakizay.');
+      expect(result.verses['16']).toBe('16. "Fa tena tia an\'izao tontolo izao Andriamanitra ka nanome an\'ilay Zanany lahitokana, mba tsy ho ringana izay rehetra maneho finoana azy, fa hahazo fiainana mandrakizay.');
     });
 
     it('should get verses from KJV version', () => {
