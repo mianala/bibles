@@ -1,6 +1,6 @@
 # mg-bibles
 
-A package for accessing Bible verses in Malagasy and Diem versions. This package is actively maintained as it's a core dependency of [Stage](https://stage.loha.dev/sh/k1sry6), the ultimate app for performers, musicians, and artists.
+A package for accessing Bible verses in Malagasy (MG), Diem, King James (KJV), and Louis Segond (APEE) versions. This package is actively maintained as it's a core dependency of [Stage](https://stage.loha.dev/sh/k1sry6), the ultimate app for performers, musicians, and artists.
 
 ## Installation
 
@@ -13,10 +13,20 @@ npm install mg-bibles
 ```typescript
 import { getVerses, listBooks, countVerses, chapterCount, versesCount } from 'mg-bibles';
 
-// Get specific verses
+// Get specific verses from MG version
 const verses = getVerses('mg', 'jaona 3:16');
 console.log(verses);
 // Output: { reference: 'jaona 3:16', verses: { '16': '16. For God so loved the world...' } }
+
+// Get verses from KJV version
+const kjvVerses = getVerses('kjv', 'gn 1:1');
+console.log(kjvVerses);
+// Output: { reference: 'gn 1:1', verses: { '1': '1. In the beginning God created...' } }
+
+// Get verses from APEE version
+const apeVerses = getVerses('apee', 'gn 1:1');
+console.log(apeVerses);
+// Output: { reference: 'gn 1:1', verses: { '1': '1. Dieu, au commencement...' } }
 
 // Get a range of verses
 const range = getVerses('diem', 'jaona 3:16-18');
@@ -61,7 +71,7 @@ console.log(versesInChapter);
 Returns verses from the specified Bible version based on the reference string.
 
 #### Parameters
-- `version`: The Bible version to use ('mg' or 'diem')
+- `version`: The Bible version to use ('mg', 'diem', 'kjv', or 'apee')
 - `reference`: A string in the format "book chapter:verse" or "book chapter:verse-verse" or "book chapter:verse,verse"
 
 #### Returns
@@ -70,10 +80,10 @@ An object containing:
 - `verses`: An object mapping verse numbers to their text
 
 #### Supported Reference Formats
-- Single verse: `"jaona 3:16"`
-- Verse range: `"jaona 3:16-18"`
-- Multiple verses: `"jaona 3:16,18"`
-- Whole chapter: `"jaona 3"`
+- Single verse: `"jaona 3:16"` (MG/DIEM) or `"gn 1:1"` (KJV/APEE)
+- Verse range: `"jaona 3:16-18"` or `"gn 1:1-2"`
+- Multiple verses: `"jaona 3:16,18"` or `"gn 1:1,3"`
+- Whole chapter: `"jaona 3"` or `"gn 1"`
 
 ### listBooks(version: BibleVersion)
 
@@ -140,7 +150,7 @@ versesCount('mg', 'salamo', 119) // returns 176
 ## Types
 
 ```typescript
-type BibleVersion = 'mg' | 'diem';
+type BibleVersion = 'mg' | 'diem' | 'kjv' | 'apee';
 
 type VerseReference = {
   book: string;

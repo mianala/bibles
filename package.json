@@ -1,7 +1,7 @@
 {
   "name": "mg-bibles",
-  "version": "1.2.0",
-  "description": "A package for accessing Bible verses in Malagasy and Diem versions",
+  "version": "1.3.0",
+  "description": "A package for accessing Bible verses in Malagasy (MG), Diem, King James (KJV), and Louis Segond (APEE) versions",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -14,6 +14,8 @@
     "bible",
     "malagasy",
     "diem",
+    "kjv",
+    "apee",
     "verses",
     "scripture",
     "gospel"
