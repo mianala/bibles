@@ -10,14 +10,14 @@ import {
 describe('Bible Functions', () => {
   describe('getVerses', () => {
     it('should get verses from MG version', () => {
-      const result = getVerses('mg', 'johany 3:16');
-      expect(result.reference).toBe('johany 3:16');
+      const result = getVerses('mg', 'jaona 3:16');
+      expect(result.reference).toBe('jaona 3:16');
       expect(result.verses['16']).toBe('16. Fa izany no fitiavana Andriamanitra tamin\'izao tontolo izao: dia ny nanome ny Zanany tokana, mba tsy ho very izay rehetra mino Azy, fa hanana fiainana mandrakizay.');
     });
 
     it('should get verses from DIEM version', () => {
-      const result = getVerses('diem', 'johany 3:16');
-      expect(result.reference).toBe('johany 3:16');
+      const result = getVerses('diem', 'jaona 3:16');
+      expect(result.reference).toBe('jaona 3:16');
       expect(result.verses['16']).toBe('16. Fa izany no fitiavana Andriamanitra tamin\'izao tontolo izao: dia ny nanome ny Zanany tokana, mba tsy ho very izay rehetra mino Azy, fa hanana fiainana mandrakizay.');
     });
 
@@ -74,14 +74,14 @@ describe('Bible Functions', () => {
   describe('listBooks', () => {
     it('should list books for MG version', () => {
       const books = listBooks('mg');
-      expect(books).toContain('johany');
+      expect(books).toContain('jaona');
       expect(books).toContain('genesisy');
       expect(books.length).toBeGreaterThan(0);
     });
 
     it('should list books for DIEM version', () => {
       const books = listBooks('diem');
-      expect(books).toContain('johany');
+      expect(books).toContain('jaona');
       expect(books).toContain('genesisy');
       expect(books.length).toBeGreaterThan(0);
     });
@@ -105,11 +105,11 @@ describe('Bible Functions', () => {
 
   describe('chapterCount', () => {
     it('should get chapter count for MG version', () => {
-      expect(chapterCount('mg', 'johany')).toBe(21);
+      expect(chapterCount('mg', 'jaona')).toBe(21);
     });
 
     it('should get chapter count for DIEM version', () => {
-      expect(chapterCount('diem', 'johany')).toBe(21);
+      expect(chapterCount('diem', 'jaona')).toBe(21);
     });
 
     it('should get chapter count for KJV version', () => {
@@ -131,11 +131,11 @@ describe('Bible Functions', () => {
 
   describe('versesCount', () => {
     it('should get verse count for MG version', () => {
-      expect(versesCount('mg', 'johany', 3)).toBe(36);
+      expect(versesCount('mg', 'jaona', 3)).toBe(36);
     });
 
     it('should get verse count for DIEM version', () => {
-      expect(versesCount('diem', 'johany', 3)).toBe(36);
+      expect(versesCount('diem', 'jaona', 3)).toBe(36);
     });
 
     it('should get verse count for KJV version', () => {
@@ -161,11 +161,11 @@ describe('Bible Functions', () => {
 
   describe('countVerses', () => {
     it('should get total verse count for MG version', () => {
-      expect(countVerses('mg', 'johany')).toBe(879);
+      expect(countVerses('mg', 'jaona')).toBe(879);
     });
 
     it('should get total verse count for DIEM version', () => {
-      expect(countVerses('diem', 'johany')).toBe(879);
+      expect(countVerses('diem', 'jaona')).toBe(879);
     });
 
     it('should get total verse count for KJV version', () => {
