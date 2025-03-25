@@ -18,14 +18,24 @@ const verses = getVerses('mg', 'jaona 3:16');
 console.log(verses);
 // Output: { reference: 'jaona 3:16', verses: { '16': '16. For God so loved the world...' } }
 
-// Get verses from KJV version
-const kjvVerses = getVerses('kjv', 'gn 1:1');
+// Get verses from KJV version using full book name
+const kjvVerses = getVerses('kjv', 'genesis 1:1');
 console.log(kjvVerses);
+// Output: { reference: 'genesis 1:1', verses: { '1': '1. In the beginning God created...' } }
+
+// Get verses from KJV version using abbreviation
+const kjvAbbr = getVerses('kjv', 'gn 1:1');
+console.log(kjvAbbr);
 // Output: { reference: 'gn 1:1', verses: { '1': '1. In the beginning God created...' } }
 
-// Get verses from APEE version
-const apeVerses = getVerses('apee', 'gn 1:1');
+// Get verses from APEE version using full book name
+const apeVerses = getVerses('apee', 'genesis 1:1');
 console.log(apeVerses);
+// Output: { reference: 'genesis 1:1', verses: { '1': '1. Dieu, au commencement...' } }
+
+// Get verses from APEE version using abbreviation
+const apeAbbr = getVerses('apee', 'gn 1:1');
+console.log(apeAbbr);
 // Output: { reference: 'gn 1:1', verses: { '1': '1. Dieu, au commencement...' } }
 
 // Get a range of verses
@@ -80,10 +90,12 @@ An object containing:
 - `verses`: An object mapping verse numbers to their text
 
 #### Supported Reference Formats
-- Single verse: `"jaona 3:16"` (MG/DIEM) or `"gn 1:1"` (KJV/APEE)
-- Verse range: `"jaona 3:16-18"` or `"gn 1:1-2"`
-- Multiple verses: `"jaona 3:16,18"` or `"gn 1:1,3"`
-- Whole chapter: `"jaona 3"` or `"gn 1"`
+- Single verse: `"jaona 3:16"` (MG/DIEM) or `"genesis 1:1"` / `"gn 1:1"` (KJV/APEE)
+- Verse range: `"jaona 3:16-18"` or `"genesis 1:1-2"` / `"gn 1:1-2"`
+- Multiple verses: `"jaona 3:16,18"` or `"genesis 1:1,3"` / `"gn 1:1,3"`
+- Whole chapter: `"jaona 3"` or `"genesis 1"` / `"gn 1"`
+
+Note: For KJV and APEE versions, both full book names and standard abbreviations are supported (e.g., "genesis" or "gn" for Genesis).
 
 ### listBooks(version: BibleVersion)
 

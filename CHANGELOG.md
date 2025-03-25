@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2024-03-22
+
+### Added
+- Support for abbreviated book names in KJV and APEE versions (e.g., "gn" for "genesis")
+- Enhanced error handling for invalid book names, chapters, and verses
+- Improved test coverage for all Bible versions and reference formats
+
+### Changed
+- Updated test suite to cover more edge cases and error scenarios
+- Improved documentation and examples in README
+
 ## [1.3.0] - 2024-03-21
 
 ### Added
