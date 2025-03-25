@@ -240,4 +240,155 @@ export function countVerses(version: BibleVersion, bookName: string): number {
   return totalVerses;
 }
 
+// Add new API interfaces
+interface BibleAPIResponse {
+  reference: string;
+  verses: {
+    book_name: string;
+    chapter: number;
+    verse: number;
+    text: string;
+  }[];
+  text: string;
+  translation_name: string;
+}
+
+interface BibleTextResponse {
+  reference: string;
+  text: string;
+  translation_id: string;
+  translation_name: string;
+  translation_note: string;
+}
+
+async function fetchExternalVerse(version: string, reference: string) {
+  const response = await fetch(`https://bible-api.com/${reference}?translation=${version}`);
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch verse 🚫');
+  }
+
+  const data: BibleAPIResponse | BibleTextResponse = await response.json();
+
+  // Handle text-only response (KJV, ASV)
+  if (!('verses' in data)) {
+    console.log('📖 Received text-only response');
+    // Split text into verses by sentences
+    const verses = data.text
+      .split(/(?<=[.!?])\s+/)
+      .filter(Boolean)
+      .reduce(
+        (acc, text, index) => {
+          const verseNum = (index + 1).toString();
+          acc[verseNum] = `${verseNum}. ${text.trim()}`;
+          return acc;
+        },
+        {} as Record<string, string>
+      );
+
+    return {
+      reference: data.reference,
+      verses,
+    };
+  }
+
+  // Handle verses array response
+  const verses = data.verses.reduce(
+    (acc, verse) => {
+      acc[verse.verse.toString()] = `${verse.verse}. ${verse.text.trim()}`;
+      return acc;
+    },
+    {} as Record<string, string>
+  );
+
+  return {
+    reference: data.reference,
+    verses,
+  };
+}
+
+async function fetchBibleToolVerse(version: string, reference: string) {
+  const [bookPart, versePart] = reference.toLowerCase().split(' ');
+  let bookCode: string;
+
+  const cleanBookName = (name: string) => name.replace(/\s+/g, '').toLowerCase();
+
+  if (/^\d/.test(bookPart)) {
+    const [num, ...nameParts] = reference.toLowerCase().split(' ');
+    const name = cleanBookName(nameParts[0]);
+    if (name.startsWith('phil')) {
+      bookCode = name.slice(0, 5);
+    } else {
+      bookCode = name.slice(0, 3);
+    }
+    bookCode = `${num}${bookCode}`;
+  } else {
+    const name = cleanBookName(bookPart);
+    if (name.startsWith('phil')) {
+      bookCode = name.slice(0, 5);
+    } else {
+      bookCode = name.slice(0, 3);
+    }
+  }
+
+  const formattedVersion = version === 'niv' ? 'niv' : 'lsg';
+  const formattedReference = `${formattedVersion}-${bookCode}/${versePart}`;
+
+  const response = await fetch(`http://ibibles.net/quote.php?${formattedReference}`);
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch verse 🚫');
+  }
+
+  const html = await response.text();
+
+  // if (!html.trim()) {
+  //   throw new Error('No verses found 📭');
+  // }
+
+  console.log('HTML:', html);
+
+  const verses = {} as Record<string, string>;
+
+  // Updated regex to handle both formats
+  const verseRegex = /<small>(\d+:\d+)<\/small>\s*([^<]+)(?:\s*<br>|\s*$)/g;
+
+  let match;
+  while ((match = verseRegex.exec(html)) !== null) {
+    const [, reference, text] = match;
+    const verseNum = reference.split(':')[1];
+    const cleanText = text
+      .trim()
+      .replace(/^["']|["']$/g, '') // Remove quotes at start/end
+      .replace(/\s+/g, ' '); // Normalize whitespace
+    verses[verseNum] = `${verseNum}. ${cleanText}`;
+  }
+
+  if (Object.keys(verses).length === 0) {
+    console.log('🔍 No verses found in HTML:', html);
+    throw new Error('No verses found in response 📭');
+  }
+
+  console.log(verses);
+
+  return {
+    reference,
+    verses,
+  };
+}
+
+export async function fetchVerses(version: string, reference: string) {
+  // Handle Bible Tool API versions (NIV and LSG)
+  if (version === 'niv' || version === 'lsg') {
+    return fetchBibleToolVerse(version, reference);
+  }
+  
+  // Handle Bible API versions (KJV and ASV)
+  if (version === 'kjv' || version === 'asv') {
+    return fetchExternalVerse(version, reference);
+  }
+
+  throw new Error(`Unsupported Bible version: ${version}. Supported versions are: niv, lsg, kjv, asv`);
+}
+
 export type { BibleVersion, VerseReference }; 
