@@ -262,7 +262,9 @@ interface BibleTextResponse {
 }
 
 async function fetchExternalVerse(version: string, reference: string) {
-  const response = await fetch(`https://bible-api.com/${reference}?translation=${version}`);
+  // Normalize reference to lowercase
+  const normalizedReference = reference.toLowerCase();
+  const response = await fetch(`https://bible-api.com/${normalizedReference}?translation=${version}`);
 
   if (!response.ok) {
     throw new Error('Failed to fetch verse 🚫');
@@ -287,7 +289,7 @@ async function fetchExternalVerse(version: string, reference: string) {
       );
 
     return {
-      reference: data.reference,
+      reference: normalizedReference,
       verses,
     };
   }
@@ -302,19 +304,21 @@ async function fetchExternalVerse(version: string, reference: string) {
   );
 
   return {
-    reference: data.reference,
+    reference: normalizedReference,
     verses,
   };
 }
 
 async function fetchBibleToolVerse(version: string, reference: string) {
-  const [bookPart, versePart] = reference.toLowerCase().split(' ');
+  // Normalize reference to lowercase for processing
+  const normalizedReference = reference.toLowerCase();
+  const [bookPart, versePart] = normalizedReference.split(' ');
   let bookCode: string;
 
   const cleanBookName = (name: string) => name.replace(/\s+/g, '').toLowerCase();
 
   if (/^\d/.test(bookPart)) {
-    const [num, ...nameParts] = reference.toLowerCase().split(' ');
+    const [num, ...nameParts] = normalizedReference.split(' ');
     const name = cleanBookName(nameParts[0]);
     if (name.startsWith('phil')) {
       bookCode = name.slice(0, 5);
@@ -342,11 +346,10 @@ async function fetchBibleToolVerse(version: string, reference: string) {
 
   const html = await response.text();
 
-  // if (!html.trim()) {
-  //   throw new Error('No verses found 📭');
-  // }
-
-  console.log('HTML:', html);
+  // Handle error responses
+  if (html.includes('Invalid syntax') || html.includes('Bible verse not found')) {
+    throw new Error('Verse not found or invalid reference 📭');
+  }
 
   const verses = {} as Record<string, string>;
 
@@ -369,10 +372,8 @@ async function fetchBibleToolVerse(version: string, reference: string) {
     throw new Error('No verses found in response 📭');
   }
 
-  console.log(verses);
-
   return {
-    reference,
+    reference: normalizedReference,
     verses,
   };
 }

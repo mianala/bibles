@@ -88,11 +88,15 @@ describe('fetchVerses', () => {
     });
 
     it('should throw error for invalid reference', async () => {
-      await expect(fetchVerses('niv', 'invalid')).rejects.toThrow();
+      await expect(fetchVerses('niv', 'invalid')).rejects.toThrow(
+        'Verse not found or invalid reference'
+      );
     });
 
     it('should throw error for non-existent verse', async () => {
-      await expect(fetchVerses('niv', 'john 3:999')).rejects.toThrow();
+      await expect(fetchVerses('niv', 'john 3:999')).rejects.toThrow(
+        'Verse not found or invalid reference'
+      );
     });
   });
 }); 
