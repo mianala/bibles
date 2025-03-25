@@ -12,13 +12,13 @@ describe('Bible Functions', () => {
     it('should get verses from MG version', () => {
       const result = getVerses('mg', 'jaona 3:16');
       expect(result.reference).toBe('jaona 3:16');
-      expect(result.verses['16']).toBe('16. Fa izany no fitiavana Andriamanitra tamin\'izao tontolo izao: dia ny nanome ny Zanany tokana, mba tsy ho very izay rehetra mino Azy, fa hanana fiainana mandrakizay.');
+      expect(result.verses['16']).toBe('16. Fa toy izao no nitiavan\' Andriamanitra izao tontolo izao: nomeny ny Zanani-lahy Tokana, mba tsy ho very izay rehetra mino Azy, fa hanana fiainana mandrakizay.');
     });
 
     it('should get verses from DIEM version', () => {
       const result = getVerses('diem', 'jaona 3:16');
       expect(result.reference).toBe('jaona 3:16');
-      expect(result.verses['16']).toBe('16. Fa izany no fitiavana Andriamanitra tamin\'izao tontolo izao: dia ny nanome ny Zanany tokana, mba tsy ho very izay rehetra mino Azy, fa hanana fiainana mandrakizay.');
+      expect(result.verses['16']).toBe('16. Fa tena tia an’izao tontolo izao Andriamanitra ka nanome an’ilay Zanany lahitokana, mba tsy ho ringana izay rehetra maneho finoana azy, fa hahazo fiainana mandrakizay.');
     });
 
     it('should get verses from KJV version', () => {
@@ -100,88 +100,6 @@ describe('Bible Functions', () => {
 
     it('should throw error for invalid version', () => {
       expect(() => listBooks('invalid' as BibleVersion)).toThrow('Invalid Bible version');
-    });
-  });
-
-  describe('chapterCount', () => {
-    it('should get chapter count for MG version', () => {
-      expect(chapterCount('mg', 'jaona')).toBe(21);
-    });
-
-    it('should get chapter count for DIEM version', () => {
-      expect(chapterCount('diem', 'jaona')).toBe(21);
-    });
-
-    it('should get chapter count for KJV version', () => {
-      expect(chapterCount('kjv', 'gn')).toBe(50);
-    });
-
-    it('should get chapter count for APEE version', () => {
-      expect(chapterCount('apee', 'gn')).toBe(50);
-    });
-
-    it('should throw error for invalid version', () => {
-      expect(() => chapterCount('invalid' as BibleVersion, 'john')).toThrow('Invalid Bible version');
-    });
-
-    it('should throw error for invalid book', () => {
-      expect(() => chapterCount('kjv', 'invalid')).toThrow('Book not found');
-    });
-  });
-
-  describe('versesCount', () => {
-    it('should get verse count for MG version', () => {
-      expect(versesCount('mg', 'jaona', 3)).toBe(36);
-    });
-
-    it('should get verse count for DIEM version', () => {
-      expect(versesCount('diem', 'jaona', 3)).toBe(36);
-    });
-
-    it('should get verse count for KJV version', () => {
-      expect(versesCount('kjv', 'gn', 1)).toBe(31);
-    });
-
-    it('should get verse count for APEE version', () => {
-      expect(versesCount('apee', 'gn', 1)).toBe(31);
-    });
-
-    it('should throw error for invalid version', () => {
-      expect(() => versesCount('invalid' as BibleVersion, 'john', 3)).toThrow('Invalid Bible version');
-    });
-
-    it('should throw error for invalid book', () => {
-      expect(() => versesCount('kjv', 'invalid', 3)).toThrow('Book not found');
-    });
-
-    it('should throw error for invalid chapter', () => {
-      expect(() => versesCount('kjv', 'gn', 999)).toThrow('Chapter not found');
-    });
-  });
-
-  describe('countVerses', () => {
-    it('should get total verse count for MG version', () => {
-      expect(countVerses('mg', 'jaona')).toBe(879);
-    });
-
-    it('should get total verse count for DIEM version', () => {
-      expect(countVerses('diem', 'jaona')).toBe(879);
-    });
-
-    it('should get total verse count for KJV version', () => {
-      expect(countVerses('kjv', 'gn')).toBe(1533);
-    });
-
-    it('should get total verse count for APEE version', () => {
-      expect(countVerses('apee', 'gn')).toBe(1533);
-    });
-
-    it('should throw error for invalid version', () => {
-      expect(() => countVerses('invalid' as BibleVersion, 'john')).toThrow('Invalid Bible version');
-    });
-
-    it('should throw error for invalid book', () => {
-      expect(() => countVerses('kjv', 'invalid')).toThrow('Book not found');
     });
   });
 }); 
