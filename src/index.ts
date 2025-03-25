@@ -25,7 +25,7 @@ function convertKJVAPEEFormat(data: KJVAPEEFormat): Record<string, BibleBook> {
   return data.reduce((acc, book) => {
     const bookData: BibleBook = {
       name: book.name,
-      order: 0, // We'll need to set this based on your ordering requirements
+      order: 0,
       chapter_number: book.chapters.length,
     };
 
@@ -38,29 +38,70 @@ function convertKJVAPEEFormat(data: KJVAPEEFormat): Record<string, BibleBook> {
     });
 
     acc[book.abbrev.toLowerCase()] = bookData;
+    acc[book.name.toLowerCase()] = bookData;
     return acc;
   }, {} as Record<string, BibleBook>);
 }
 
 function parseVerseReference(reference: string): VerseReference {
   const parts = reference.toLowerCase().split(' ');
+  
+  if (/^\d/.test(parts[0]) && parts.length >= 2) {
+    const number = parts[0];
+    const bookName = parts[1];
+    const versePart = parts[2];
+    const combinedBookName = `${number} ${bookName}`;
+
+    if (!versePart) {
+      return {
+        book: combinedBookName,
+        chapter: 1,
+      };
+    }
+
+    const [chapter, verseRange] = versePart.split(':');
+
+    if (!chapter) {
+      throw new Error('Chapter not found in reference');
+    }
+
+    if (!verseRange) {
+      return {
+        book: combinedBookName,
+        chapter: parseInt(chapter),
+      };
+    }
+
+    let verses: number[] = [];
+    if (verseRange.includes('-')) {
+      const [start, end] = verseRange.split('-').map(Number);
+      if (!end || !start || end < start) {
+        throw new Error('Invalid verse range');
+      }
+      verses = Array.from({ length: end - start + 1 }, (_, i) => start + i);
+    } else if (verseRange.includes(',')) {
+      verses = verseRange.split(',').map(Number);
+    } else {
+      verses = [parseInt(verseRange)];
+    }
+
+    return {
+      book: combinedBookName,
+      chapter: parseInt(chapter),
+      verses,
+    };
+  }
+
   const bookPart = parts[0];
-  let versePart = parts[1];
+  const versePart = parts[1];
 
   if (!bookPart) {
     throw new Error('Book not found in reference');
   }
 
-  let bookKey = bookPart;
-  if (/^\d/.exec(bookPart)) {
-    const bookName = parts[1];
-    bookKey = `${bookName}${bookPart}`;
-    versePart = parts[2];
-  }
-
   if (!versePart) {
     return {
-      book: bookKey,
+      book: bookPart,
       chapter: 1,
     };
   }
@@ -73,7 +114,7 @@ function parseVerseReference(reference: string): VerseReference {
 
   if (!verseRange) {
     return {
-      book: bookKey,
+      book: bookPart,
       chapter: parseInt(chapter),
     };
   }
@@ -81,11 +122,9 @@ function parseVerseReference(reference: string): VerseReference {
   let verses: number[] = [];
   if (verseRange.includes('-')) {
     const [start, end] = verseRange.split('-').map(Number);
-
     if (!end || !start || end < start) {
       throw new Error('Invalid verse range');
     }
-
     verses = Array.from({ length: end - start + 1 }, (_, i) => start + i);
   } else if (verseRange.includes(',')) {
     verses = verseRange.split(',').map(Number);
@@ -94,7 +133,7 @@ function parseVerseReference(reference: string): VerseReference {
   }
 
   return {
-    book: bookKey,
+    book: bookPart,
     chapter: parseInt(chapter),
     verses,
   };
