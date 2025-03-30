@@ -43,14 +43,27 @@ function convertKJVAPEEFormat(data: KJVAPEEFormat): Record<string, BibleBook> {
   }, {} as Record<string, BibleBook>);
 }
 
-function parseVerseReference(reference: string): VerseReference {
+function mapBookName(bookName: string, version: BibleVersion): string {
+  // Only apply special mapping for MG and DIEM versions
+  if (version === 'mg' || version === 'diem') {
+    // Handle numbered books
+    const numberedMatch = bookName.match(/^(\d+)\s+(\w+)$/);
+    if (numberedMatch) {
+      const [_, number, name] = numberedMatch;
+      return `${name}${number}`;
+    }
+  }
+  return bookName;
+}
+
+function parseVerseReference(reference: string, version: BibleVersion): VerseReference {
   const parts = reference.toLowerCase().split(' ');
   
   if (/^\d/.test(parts[0]) && parts.length >= 2) {
     const number = parts[0];
     const bookName = parts[1];
     const versePart = parts[2];
-    const combinedBookName = `${number} ${bookName}`;
+    const combinedBookName = mapBookName(`${number} ${bookName}`, version);
 
     if (!versePart) {
       return {
@@ -92,7 +105,7 @@ function parseVerseReference(reference: string): VerseReference {
     };
   }
 
-  const bookPart = parts[0];
+  const bookPart = mapBookName(parts[0], version);
   const versePart = parts[1];
 
   if (!bookPart) {
@@ -150,7 +163,7 @@ export function getVerses(
     throw new Error(`Invalid Bible version: ${version}. Available versions: ${BIBLE_VERSIONS.join(', ')}`);
   }
 
-  const parsed = parseVerseReference(reference);
+  const parsed = parseVerseReference(reference, version);
   const bookData = getBibleData(version)[parsed.book];
 
   if (!bookData) {
@@ -191,7 +204,7 @@ function getChapter(
   reference: string;
   verses: Record<string, string>;
 } {
-  const parsed = parseVerseReference(reference);
+  const parsed = parseVerseReference(reference, version);
   const bookData = getBibleData(version)[parsed.book];
 
   if (!bookData) {
