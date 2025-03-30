@@ -43,7 +43,7 @@ describe('APEE Bible Version Tests', () => {
       expect(Array.isArray(books)).toBe(true);
       expect(books.length).toBeGreaterThan(0);
       expect(books).toContain('genesis');
-      expect(books).toContain('jean');
+      expect(books).toContain('john');
     });
   });
 
@@ -55,9 +55,9 @@ describe('APEE Bible Version Tests', () => {
     });
 
     it('should count verses in Psalms', () => {
-      expect(countVerses('apee', 'psaumes')).toBeGreaterThan(0);
-      expect(chapterCount('apee', 'psaumes')).toBeGreaterThan(0);
-      expect(versesCount('apee', 'psaumes', 119)).toBeGreaterThan(0);
+      expect(countVerses('apee', 'psalms')).toBeGreaterThan(0);
+      expect(chapterCount('apee', 'psalms')).toBeGreaterThan(0);
+      expect(versesCount('apee', 'psalms', 119)).toBeGreaterThan(0);
     });
   });
 }); 
