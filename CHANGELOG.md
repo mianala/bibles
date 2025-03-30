@@ -8,7 +8,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.4.0] - 2024-03-22
 
 ### Added
-- Support for abbreviated book names in KJV and APEE versions (e.g., "gn" for "genesis")
 - Enhanced error handling for invalid book names, chapters, and verses
 - Improved test coverage for all Bible versions and reference formats
 
