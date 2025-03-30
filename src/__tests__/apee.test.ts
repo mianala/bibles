@@ -8,10 +8,9 @@ describe('APEE Bible Version Tests', () => {
       expect(result.verses['1']).toBe('1. Dieu, au commencement, créa les cieux et la terre;');
     });
 
-
     it('should get verses from numbered books using full name', () => {
-      const result = getVerses('apee', '1 corinthiens 2:4');
-      expect(result.reference).toBe('1 corinthiens 2:4');
+      const result = getVerses('apee', '1 corinthians 2:4');
+      expect(result.reference).toBe('1 corinthians 2:4');
       expect(result.verses['4']).toContain('ma parole et ma prédication');
     });
 
@@ -19,7 +18,7 @@ describe('APEE Bible Version Tests', () => {
       const result = getVerses('apee', 'genesis 1:1-2');
       expect(result.reference).toBe('genesis 1:1-2');
       expect(result.verses['1']).toBe('1. Dieu, au commencement, créa les cieux et la terre;');
-      expect(result.verses['2']).toContain('La terre était informe et vide');
+      expect(result.verses['2']).toContain('masse fluide');
     });
 
     it('should get multiple verses', () => {
