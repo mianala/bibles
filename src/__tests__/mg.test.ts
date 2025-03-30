@@ -25,6 +25,18 @@ describe('MG Bible Version Tests', () => {
       expect(result.reference).toBe('jaona 3');
       expect(Object.keys(result.verses).length).toBeGreaterThan(1);
     });
+
+    it('should get Asa 1:1', () => {
+      const result = getVerses('mg', 'asa 1:1');
+      expect(result.reference).toBe('asa 1:1');
+      expect(Object.keys(result.verses).length).toBe(1);
+    });
+
+    it('should get 1 Korintiana 1:1', () => {
+      const result = getVerses('mg', '1 Korintiana 1:1');
+      expect(result.reference).toBe('1 Korintiana 1:1');
+      expect(Object.keys(result.verses).length).toBe(1);
+    });
   });
 
   describe('listBooks', () => {
